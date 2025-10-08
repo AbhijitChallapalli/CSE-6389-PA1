@@ -53,10 +53,17 @@ def main(args):
     device = torch.device(cfg["train"]["device"])
     out_dir = cfg.get("out_dir", "./runs"); os.makedirs(out_dir, exist_ok=True)
 
-    train_ds = MRIVolumeDataset(root_dir=cfg["data"]["train_dir"],classes=tuple(cfg["data"]["classes"]),target_shape=tuple(cfg["data"]["target_shape"]),
-        train=True,augment_cfg=cfg["data"]["augment"],
-    )
-
+    # train_ds = MRIVolumeDataset(root_dir=cfg["data"]["train_dir"],classes=tuple(cfg["data"]["classes"]),target_shape=tuple(cfg["data"]["target_shape"]),
+    #     train=True,augment_cfg=cfg["data"]["augment"],
+    # )
+    train_ds = MRIVolumeDataset(
+    root_dir=cfg["data"]["train_dir"],
+    classes=tuple(cfg["data"]["classes"]),
+    target_shape=tuple(cfg["data"]["target_shape"]),
+    train=True,
+    augment_cfg=cfg["data"]["augment"],
+    preproc_cfg=cfg["data"]["preproc"],   # <<< add this
+)
     print("Train counts (health, patient):", _class_counts(train_ds))
 
     sampler = _make_balanced_sampler(train_ds)
@@ -125,14 +132,23 @@ def main(args):
     plot_train_loss(train_losses, os.path.join(out_dir, "loss.png"))
     print(f"Best model saved to: {best_path}")
 
-    # ---- learn auto threshold on the same subjects (no aug) ----
+    # # ---- learn auto threshold on the same subjects (no aug) ----
+    # train_eval = MRIVolumeDataset(
+    #     root_dir=cfg["data"]["train_dir"],
+    #     classes=tuple(cfg["data"]["classes"]),
+    #     target_shape=tuple(cfg["data"]["target_shape"]),
+    #     train=False,
+    #     augment_cfg=cfg["data"]["augment"],
+    # )
+
     train_eval = MRIVolumeDataset(
-        root_dir=cfg["data"]["train_dir"],
-        classes=tuple(cfg["data"]["classes"]),
-        target_shape=tuple(cfg["data"]["target_shape"]),
-        train=False,
-        augment_cfg=cfg["data"]["augment"],
-    )
+    root_dir=cfg["data"]["train_dir"],
+    classes=tuple(cfg["data"]["classes"]),
+    target_shape=tuple(cfg["data"]["target_shape"]),
+    train=False,
+    augment_cfg=cfg["data"]["augment"],
+    preproc_cfg=cfg["data"]["preproc"],   # <<< add this
+)
 
     dl_eval = DataLoader(train_eval, batch_size=1, shuffle=False, num_workers=0, pin_memory=False)
     model.load_state_dict(torch.load(best_path, map_location=device))

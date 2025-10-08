@@ -4,6 +4,12 @@ data:
   classes: ["health", "patient"]
   target_shape: [128, 128, 128]
 
+  preproc:
+    register_to_mni: true # <<< enable MNI registration
+    mni_iso_mm: 2 # 2mm template (fast); use 1 for higher detail
+    apply_brain_mask: true # multiply by MNI brain mask after registration
+    cache_dir: "./cache_mni"
+
   augment:
     enable: true
     flip_prob: 0.35
