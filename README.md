@@ -60,6 +60,11 @@ pip install -r requirements.txt
 ### 1. **Training the Model**
 
 ```bash
+git clone https://github.com/AbhijitChallapalli/CSE-6389-PA1.git
+```
+
+
+```bash
 python train.py --config config.yaml
 ```
 
@@ -149,14 +154,13 @@ Interpretation:
 
 ---
 
-## ✨ Future Work
-
-- Integration with transformer-based 3D architectures (e.g., **SwinUNETR**).  
+##  Future Work
+ 
 - Incorporation of **multi-modal MRI (T1, FLAIR, DTI)**.  
 - Domain adaptation and cross-cohort evaluation using **ADNI** dataset.
 
 ---
 
-## 🧾 License
+##  License
 
 This project is distributed under the **MIT License**. See `LICENSE` for more information.
