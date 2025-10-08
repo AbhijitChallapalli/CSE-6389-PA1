@@ -53,12 +53,8 @@ def main(args):
     device = torch.device(cfg["train"]["device"])
     out_dir = cfg.get("out_dir", "./runs"); os.makedirs(out_dir, exist_ok=True)
 
-    train_ds = MRIVolumeDataset(
-        root_dir=cfg["data"]["train_dir"],
-        classes=tuple(cfg["data"]["classes"]),
-        target_shape=tuple(cfg["data"]["target_shape"]),
-        train=True,
-        augment_cfg=cfg["data"]["augment"],
+    train_ds = MRIVolumeDataset(root_dir=cfg["data"]["train_dir"],classes=tuple(cfg["data"]["classes"]),target_shape=tuple(cfg["data"]["target_shape"]),
+        train=True,augment_cfg=cfg["data"]["augment"],
     )
 
     print("Train counts (health, patient):", _class_counts(train_ds))
