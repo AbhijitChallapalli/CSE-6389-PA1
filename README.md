@@ -133,7 +133,7 @@ Outputs include:
 | Metric | Value |
 |---------|--------|
 | Accuracy | **60.00%** |
-| Confusion Matrix | [[5, 0], [4, 1]] |
+| Confusion Matrix | [[2, 3], [1, 4]] |
 
 Interpretation:  
 - 5 CN subjects correctly classified (True Negatives)  
