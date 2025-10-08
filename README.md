@@ -138,9 +138,13 @@ Outputs include:
 Interpretation:
 
  -The model achieved 60% classification accuracy on the test dataset.
+ 
  -True Negatives (CN correctly identified): 2
+ 
  -False Positives (CN misclassified as AD): 3
+ 
  -False Negatives (AD misclassified as CN): 1
+ 
  -True Positives (AD correctly identified): 4
 
 ---
