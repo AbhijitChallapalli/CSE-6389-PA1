@@ -1,0 +1,12 @@
+numpy
+scipy
+nibabel
+torch
+torchvision
+torchaudio
+tqdm
+scikit-learn
+matplotlib
+seaborn
+pyyaml
+rich

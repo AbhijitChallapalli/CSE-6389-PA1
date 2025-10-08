@@ -1,0 +1,11 @@
+path,true,pred,prob_ad
+./Testing\health\T1_bet_2_0413_sub11.nii.gz,0,0,0.394999
+./Testing\health\T1_bet_2_0413_sub12.nii.gz,0,0,0.393226
+./Testing\health\T1_bet_2_0413_sub13.nii.gz,0,0,0.393639
+./Testing\health\T1_bet_2_0413_sub14.nii.gz,0,0,0.391709
+./Testing\health\T1_bet_2_0413_sub15.nii.gz,0,0,0.391886
+./Testing\patient\T1_bet_2_0413_sub11.nii.gz,1,0,0.392027
+./Testing\patient\T1_bet_2_0413_sub12.nii.gz,1,0,0.392310
+./Testing\patient\T1_bet_2_0413_sub13.nii.gz,1,0,0.393482
+./Testing\patient\T1_bet_2_0413_sub14.nii.gz,1,1,0.397082
+./Testing\patient\T1_bet_2_0413_sub15.nii.gz,1,0,0.392187

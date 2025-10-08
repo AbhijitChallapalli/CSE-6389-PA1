@@ -1,0 +1,39 @@
+data:
+  train_dir: "./Training"
+  test_dir: "./Testing"
+  classes: ["health", "patient"]
+  target_shape: [128, 128, 128]
+
+  augment:
+    enable: true
+    flip_prob: 0.35
+    max_rotate_deg: 0
+    gamma_jitter: 0.0
+    noise_std: 0.0
+
+train:
+  seed: 42
+  device: "cpu"
+  batch_size: 1
+  num_workers: 0
+  epochs: 12
+  lr: 3.0e-4
+  weight_decay: 5.0e-5
+  grad_clip: 2.0
+  accumulate_steps: 4
+  class_weighting: "auto"
+
+model:
+  name: "cnn3d"
+  in_ch: 1
+  num_classes: 2
+  dropout: 0.20
+
+test:
+  load_path: "./runs/best_model.pt"
+  threshold: "auto"
+  save_slices: true
+  slice_indices: ["center"]
+  cmap: "gray"
+
+out_dir: "./runs"
