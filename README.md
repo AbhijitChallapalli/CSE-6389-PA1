@@ -47,6 +47,10 @@ project/
 
 ##  Installation
 
+```bash
+git clone https://github.com/AbhijitChallapalli/CSE-6389-PA1.git
+```
+
 Ensure the following dependencies are installed:
 
 ```bash
@@ -58,11 +62,6 @@ pip install -r requirements.txt
 ## Usage
 
 ### 1. **Training the Model**
-
-```bash
-git clone https://github.com/AbhijitChallapalli/CSE-6389-PA1.git
-```
-
 
 ```bash
 python train.py --config config.yaml
