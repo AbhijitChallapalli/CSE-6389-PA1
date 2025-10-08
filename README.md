@@ -32,6 +32,7 @@ project/
 │   ├── data/registrations.py   # MNI registration utilities
 │   ├── models/cnn3d.py         # 3D CNN model architecture
 │   ├── utils/metrics.py        # Accuracy, F1-score, confusion matrix computations
+│   ├── utils/seed.py           # Seed value
 │   ├── vis/plots.py            # Confusion matrix and loss visualization
 │   ├── vis/slices.py           # Axial, coronal, sagittal slice visualization       
 │
