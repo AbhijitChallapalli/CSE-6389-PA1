@@ -3,7 +3,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader, WeightedRandomSampler
-
 from src.data.dataset import MRIVolumeDataset
 from src.models.cnn3d import CNN3D
 from src.utils.seed import set_all_seeds
@@ -13,25 +12,25 @@ from src.vis.plots import plot_train_loss
 def build_model(cfg):
     return CNN3D(cfg["model"]["in_ch"], cfg["model"]["num_classes"], cfg["model"]["dropout"])
 
-def _class_counts(ds):
+def class_counts(ds):
     c0 = sum(1 for _, y, _ in ds if int(y) == 0)
     c1 = sum(1 for _, y, _ in ds if int(y) == 1)
     return c0, c1
 
-def _compute_class_weights(ds, device):
-    c0, c1 = _class_counts(ds)
+def compute_class_weights(ds, device):
+    c0, c1 = class_counts(ds)
     counts = torch.tensor([c0, c1], dtype=torch.float32, device=device)
     weights = 1.0 / (counts + 1e-6)
     weights = weights / weights.sum() * 2.0
     return weights
 
 def _make_balanced_sampler(ds):
-    c0, c1 = _class_counts(ds)
+    c0, c1 = class_counts(ds)
     w0, w1 = (1.0 / (c0 + 1e-6)), (1.0 / (c1 + 1e-6))
     weights = [w0 if int(y) == 0 else w1 for _, y, _ in ds]
     return WeightedRandomSampler(weights, num_samples=len(weights), replacement=True)
 
-def _find_best_threshold(probs, labels):
+def find_best_threshold(probs, labels):
     labels = np.asarray(labels); probs = np.asarray(probs)
     best_t, best_bacc = 0.5, -1.0
     for t in np.linspace(0.05, 0.95, 181):
@@ -53,18 +52,11 @@ def main(args):
     device = torch.device(cfg["train"]["device"])
     out_dir = cfg.get("out_dir", "./runs"); os.makedirs(out_dir, exist_ok=True)
 
-    # train_ds = MRIVolumeDataset(root_dir=cfg["data"]["train_dir"],classes=tuple(cfg["data"]["classes"]),target_shape=tuple(cfg["data"]["target_shape"]),
-    #     train=True,augment_cfg=cfg["data"]["augment"],
-    # )
-    train_ds = MRIVolumeDataset(
-    root_dir=cfg["data"]["train_dir"],
-    classes=tuple(cfg["data"]["classes"]),
-    target_shape=tuple(cfg["data"]["target_shape"]),
-    train=True,
-    augment_cfg=cfg["data"]["augment"],
-    preproc_cfg=cfg["data"]["preproc"],   # <<< add this
-)
-    print("Train counts (health, patient):", _class_counts(train_ds))
+    train_ds = MRIVolumeDataset(root_dir=cfg["data"]["train_dir"],classes=tuple(cfg["data"]["classes"]),target_shape=tuple(cfg["data"]["target_shape"]),
+        train=True,augment_cfg=cfg["data"]["augment"],
+    )
+
+    print("Train counts (health, patient):", class_counts(train_ds))
 
     sampler = _make_balanced_sampler(train_ds)
     dl_train = DataLoader(train_ds, batch_size=cfg["train"]["batch_size"],
@@ -73,7 +65,7 @@ def main(args):
     model = build_model(cfg).to(device)
 
     if cfg["train"].get("class_weighting", "auto") == "auto":
-        class_w = _compute_class_weights(train_ds, device)
+        class_w = compute_class_weights(train_ds, device)
         try:
             criterion = nn.CrossEntropyLoss(weight=class_w, label_smoothing=0.02)
         except TypeError:
@@ -87,6 +79,7 @@ def main(args):
     optimizer = torch.optim.Adam(model.parameters(), lr=cfg["train"]["lr"], weight_decay=cfg["train"]["weight_decay"])
 
     sched_args = dict(mode='min', factor=0.5, patience=2, threshold=1e-4, min_lr=1e-6, cooldown=1)
+
     if "verbose" in inspect.signature(torch.optim.lr_scheduler.ReduceLROnPlateau).parameters:
         sched_args["verbose"] = True
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, **sched_args)
@@ -132,23 +125,14 @@ def main(args):
     plot_train_loss(train_losses, os.path.join(out_dir, "loss.png"))
     print(f"Best model saved to: {best_path}")
 
-    # # ---- learn auto threshold on the same subjects (no aug) ----
-    # train_eval = MRIVolumeDataset(
-    #     root_dir=cfg["data"]["train_dir"],
-    #     classes=tuple(cfg["data"]["classes"]),
-    #     target_shape=tuple(cfg["data"]["target_shape"]),
-    #     train=False,
-    #     augment_cfg=cfg["data"]["augment"],
-    # )
-
+    #Apply the threshold we learnt from the training...
     train_eval = MRIVolumeDataset(
-    root_dir=cfg["data"]["train_dir"],
-    classes=tuple(cfg["data"]["classes"]),
-    target_shape=tuple(cfg["data"]["target_shape"]),
-    train=False,
-    augment_cfg=cfg["data"]["augment"],
-    preproc_cfg=cfg["data"]["preproc"],   # <<< add this
-)
+        root_dir=cfg["data"]["train_dir"],
+        classes=tuple(cfg["data"]["classes"]),
+        target_shape=tuple(cfg["data"]["target_shape"]),
+        train=False,
+        augment_cfg=cfg["data"]["augment"],
+    )
 
     dl_eval = DataLoader(train_eval, batch_size=1, shuffle=False, num_workers=0, pin_memory=False)
     model.load_state_dict(torch.load(best_path, map_location=device))
@@ -159,7 +143,7 @@ def main(args):
             x = x.to(device).float()
             pr = torch.softmax(model(x), dim=1)[:, 1].cpu().item()
             probs.append(pr); labels.append(int(y.item()))
-    t_star, bacc = _find_best_threshold(np.array(probs), np.array(labels))
+    t_star, bacc = find_best_threshold(np.array(probs), np.array(labels))
     with open(os.path.join(out_dir, "threshold.txt"), "w") as f:
         f.write(f"{t_star:.4f}\n")
     print(f"Saved auto threshold to runs/threshold.txt (best balanced acc {bacc:.3f})")

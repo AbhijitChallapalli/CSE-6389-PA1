@@ -2,8 +2,7 @@ import os, argparse, yaml, csv
 import numpy as np
 import torch
 from torch.utils.data import DataLoader
-
-from src.data.dataset import MRIVolumeDataset  # <-- only import the dataset
+from src.data.dataset import MRIVolumeDataset 
 from src.models.cnn3d import CNN3D
 from src.utils.seed import set_all_seeds
 from src.utils.metrics import compute_basic_metrics
@@ -40,7 +39,6 @@ def main(args):
         target_shape=target_shape,
         train=False,
         augment_cfg=cfg["data"]["augment"],
-        preproc_cfg=cfg["data"]["preproc"],
     )
 
     dl_test = DataLoader(
@@ -107,7 +105,7 @@ def main(args):
 
     m = compute_basic_metrics(np.array(y_true), np.array(y_pred))
     print(f"Accuracy: {m['accuracy']*100:.2f}%")
-    print("Confusion matrix (raw counts):")
+    print("Confusion matrix:")
     print(m["confusion_matrix"])
 
     plot_confusion_matrix(

@@ -11,7 +11,7 @@ def _sha1(s: str) -> str:
 def load_canonical_img(path):
     img = nib.load(path)
     img = nib.as_closest_canonical(img)
-    return img  # keep header/affine
+    return img  
 
 def img_to_array(img) -> np.ndarray:
     return img.get_fdata().astype(np.float32)
@@ -38,7 +38,6 @@ def register_volume_to_mni(path, iso_mm=2, apply_brain_mask=True):
     """
     sub_img = load_canonical_img(path)
     tmpl, mask = get_mni_template_and_mask(iso_mm=iso_mm, want_mask=apply_brain_mask)
-    # trilinear (continuous) interpolation; affine alignment to template grid
     sub_to_mni_img = resample_to_img(source_img=sub_img, target_img=tmpl, interpolation="continuous")
     vol = img_to_array(sub_to_mni_img)
     if apply_brain_mask and mask is not None:
