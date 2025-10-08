@@ -128,17 +128,20 @@ Outputs include:
 
 ---
 
-## 📊 Evaluation & Results
+## Evaluation & Results
 
 | Metric | Value |
 |---------|--------|
 | Accuracy | **60.00%** |
 | Confusion Matrix | [[2, 3], [1, 4]] |
 
-Interpretation:  
-- 5 CN subjects correctly classified (True Negatives)  
-- 1 AD subject correctly classified (True Positive)  
-- 4 AD subjects misclassified as CN (False Negatives)
+Interpretation:
+
+The model achieved 60% classification accuracy on the test dataset.
+True Negatives (CN correctly identified): 2
+False Positives (CN misclassified as AD): 3
+False Negatives (AD misclassified as CN): 1
+True Positives (AD correctly identified): 4
 
 ---
 
