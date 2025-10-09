@@ -3,25 +3,18 @@
 This project implements a **3D Convolutional Neural Network (CNN)** for classifying MRI brain scans into two categories: **Healthy Controls (CN)** and **Alzheimer’s Disease (AD)**. The model is trained on structural MRI volumes in `.nii` or `.nii.gz` format and uses preprocessing techniques such as **MNI152 registration**, **intensity normalization**, and **data augmentation** to improve performance and generalization.
 
 ---
+## Features
 
-## 🧠 Project Overview
-
-This project focuses on building a robust deep learning pipeline for medical image analysis. The dataset comprises T1-weighted MRI volumes categorized as *health* and *patient*. Each MRI volume undergoes preprocessing (registration to MNI152 space, normalization, and augmentation) before being used to train a 3D CNN model.
-
----
-
-## 🧩 Features
-
-- MRI data preprocessing with **MNI152 registration** using FSL/ANTs workflows.  
+- MRI data preprocessing with **MNI152 registration** 
 - Robust normalization and light augmentations (random flip, rotation, gamma jitter, noise).  
-- Modular dataset loader (`MRIVolumeDataset`) with caching and canonical reorientation.  
+- Modular dataset loader `MRIVolumeDataset` 
 - Efficient **3D CNN** architecture with global average pooling and dropout for stability.  
 - Configurable YAML-based training and testing.  
 - Slice visualization (axial, coronal, sagittal) and confusion matrix generation.
 
 ---
 
-## 🗂️ Directory Structure
+## Directory Structure
 
 ```
 project/
@@ -36,32 +29,38 @@ project/
 │
 ├── src/
 │   ├── data/dataset.py         # MRI dataset class with preprocessing and augmentation
+│   ├── data/registrations.py   # MNI registration utilities
 │   ├── models/cnn3d.py         # 3D CNN model architecture
 │   ├── utils/metrics.py        # Accuracy, F1-score, confusion matrix computations
+│   ├── utils/seed.py           # Seed value
 │   ├── vis/plots.py            # Confusion matrix and loss visualization
-│   ├── vis/slices.py           # Axial, coronal, sagittal slice visualization
-│   └── registrations.py        # MNI registration utilities
+│   ├── vis/slices.py           # Axial, coronal, sagittal slice visualization       
 │
 ├── train.py                    # Model training and validation
 ├── test.py                     # Model inference and evaluation
 ├── config.yaml                 # Config file for parameters
+├── requirements.txt            # requirements file
 ├── runs/                       # Folder for saved models and logs
 └── README.md                   # This file
 ```
 
 ---
 
-## ⚙️ Installation
+##  Installation
+
+```bash
+git clone https://github.com/AbhijitChallapalli/CSE-6389-PA1.git
+```
 
 Ensure the following dependencies are installed:
 
 ```bash
-pip install torch torchvision nibabel numpy scikit-learn matplotlib seaborn pyyaml scipy
+pip install -r requirements.txt
 ```
 
 ---
 
-## 🚀 Usage
+## Usage
 
 ### 1. **Training the Model**
 
@@ -88,7 +87,7 @@ Outputs include:
 
 ---
 
-## 🧠 Model Architecture
+##  Model Architecture
 
 | Layer | Type | Output Channels | Kernel | Operation |
 |-------|------|-----------------|---------|------------|
@@ -104,7 +103,7 @@ Outputs include:
 
 ---
 
-## 🧬 Preprocessing Pipeline
+##  Preprocessing Pipeline
 
 - **Registration**: Align MRI volumes to **MNI152 template** (2mm isotropic resolution).  
 - **Normalization**: Robust z-score normalization after percentile clipping (1–99%).  
@@ -117,7 +116,7 @@ Outputs include:
 
 ---
 
-## 🧮 Training Configuration
+##  Training Configuration
 
 | Parameter | Value |
 |------------|--------|
@@ -130,21 +129,28 @@ Outputs include:
 
 ---
 
-## 📊 Evaluation & Results
+## Evaluation & Results
 
 | Metric | Value |
 |---------|--------|
 | Accuracy | **60.00%** |
-| Confusion Matrix | [[5, 0], [4, 1]] |
+| Confusion Matrix | [[2, 3], [1, 4]] |
 
-Interpretation:  
-- 5 CN subjects correctly classified (True Negatives)  
-- 1 AD subject correctly classified (True Positive)  
-- 4 AD subjects misclassified as CN (False Negatives)
+Interpretation:
+
+The model achieved 60% classification accuracy on the test dataset.
+
+True Negatives (CN correctly identified): 2
+ 
+False Positives (CN misclassified as AD): 3
+ 
+False Negatives (AD misclassified as CN): 1
+ 
+True Positives (AD correctly identified): 4
 
 ---
 
-## 📚 References
+##  References
 
 1. MNI152 Template, Montreal Neurological Institute (https://nist.mni.mcgill.ca/)  
 2. Krizhevsky, A. et al., *ImageNet Classification with Deep Convolutional Neural Networks*, NeurIPS 2012.  
@@ -155,14 +161,13 @@ Interpretation:
 
 ---
 
-## ✨ Future Work
-
-- Integration with transformer-based 3D architectures (e.g., **SwinUNETR**).  
+##  Future Work
+ 
 - Incorporation of **multi-modal MRI (T1, FLAIR, DTI)**.  
 - Domain adaptation and cross-cohort evaluation using **ADNI** dataset.
 
 ---
 
-## 🧾 License
+##  License
 
 This project is distributed under the **MIT License**. See `LICENSE` for more information.
